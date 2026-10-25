@@ -162,7 +162,7 @@ print32_string:
 	pusha
 	mov esi, ebx
 	mov edi, [cursor_pos]
-	add edi, 0xb8000    ; Add to base video memory address
+	add edi, 0xb8000
 	mov ah, 0x0f
 .print32_loop:
 	lodsb
@@ -172,7 +172,7 @@ print32_string:
 	add edi, 2
 	jmp .print32_loop
 .done:
-	mov [cursor_pos], edi   ; Save updated cursor position for next time
+	mov [cursor_pos], edi
 	sub dword [cursor_pos], 0xb8000
 	popa
 	ret
