@@ -26,7 +26,7 @@ enable_a20:
 	mov bx, KERNEL_OFFSET
 
 	mov ax, 0x0209
-	mov cx, 0x000a
+	mov cx, 0x000c
 	mov dh, 0
 	mov dl, [boot_drive]
 	int 0x13
@@ -45,6 +45,21 @@ enable_a20:
 	int 0x13
 	jc .second_read_error
 
+	; loading stage3.asm
+	mov ax, 0x0000
+	mov es, ax
+	mov bx, stage3_address
+
+	mov ah, 0x02
+	mov al, stage3_sectors
+	mov ch, 0
+	mov cl, 10
+	mov dh, 0
+	mov dl, [boot_drive]
+	int 0x13
+	jc .disk_error
+
+
 	mov dword [cursor_pos], VGA_THIRD_LINE_OFFSET
 	call switch_to_pm
 
@@ -56,6 +71,11 @@ enable_a20:
 	
 	.second_read_error:
 		mov bx, second_read_error_str
+		call print16_string
+		call print16_newline
+		jmp $
+	.disk_error:
+		mov bx, disk_error
 		call print16_string
 		call print16_newline
 		jmp $
@@ -156,7 +176,8 @@ begin_pm:
 	call print32_string
 	call print32_newline
 
-	jmp CODE_SEG:KERNEL_OFFSET
+	;jmp CODE_SEG:KERNEL_OFFSET
+	jmp CODE_SEG:stage3_address
 
 print32_string:
 	pusha
@@ -187,7 +208,8 @@ real_mode_str:		db "Currently 16 bit RM", 0
 loading_kernel_str:	db "Loading Kernel", 0
 protected_mode_str:	db "Successfully in 32 bit PM", 0
 disk_error_str:		db "Disk read error! Test 123", 0
-first_read_error_str:		db "Disk read 1 error!", 0
-second_read_error_str:		db "Disk read 2 error!", 0
+first_read_error_str:	db "Disk read 1 error!", 0
+second_read_error_str:	db "Disk read 2 error!", 0
+disk_error:		db "Disk Read Error", 0
 
 times 4096 - ($ - $$) db 0

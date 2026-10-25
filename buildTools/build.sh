@@ -12,6 +12,7 @@ echo "compiling ASM files into Binary."
 nasm -f bin -i ../src/kernel ../src/kernel/kernel.asm -o ../build/raw/kernel.bin
 nasm -f bin -i ../src/boot ../src/boot/boot.asm -o ../build/raw/boot.bin
 nasm -f bin -i ../src/boot ../src/boot/stage2.asm -o ../build/raw/stage2.bin
+nasm -f bin -i ../src/boot ../src/boot/stage3.asm -o ../build/raw/stage3.bin
 echo ""
 echo ../src/boot/boot.asm
 
@@ -24,5 +25,8 @@ dd if=../build/raw/boot.bin of=../build/vdrive/LactOS.img bs=512 seek=0 conv=not
 # stage 2
 dd if=../build/raw/stage2.bin of=../build/vdrive/LactOS.img bs=512 seek=1 conv=notrunc status=noxfer
 
+# stage 3
+dd if=../build/raw/stage3.bin of=../build/vdrive/LactOS.img bs=512 seek=9 conv=notrunc status=noxfer
+
 # kernel
-dd if=../build/raw/kernel.bin of=../build/vdrive/LactOS.img bs=512 seek=9 conv=notrunc status=noxfer
+dd if=../build/raw/kernel.bin of=../build/vdrive/LactOS.img bs=512 seek=11 conv=notrunc status=noxfer

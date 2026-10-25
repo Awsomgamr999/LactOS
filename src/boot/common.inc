@@ -12,3 +12,6 @@
 %define VGA_THIRD_LINE_OFFSET	480
 VIDEO_MEMORY	equ 0xb8000
 WHITE_ON_BLACK	equ 0x0f
+
+%define stage3_address		0x9000
+%define stage3_sectors		2
