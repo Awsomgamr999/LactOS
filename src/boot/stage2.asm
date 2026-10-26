@@ -176,7 +176,7 @@ begin_pm:
 	call print32_string
 	call print32_newline
 
-	;jmp CODE_SEG:KERNEL_OFFSET
+	mov edi, [cursor_pos]
 	jmp CODE_SEG:stage3_address
 
 print32_string:
@@ -198,9 +198,20 @@ print32_string:
 	popa
 	ret
 print32_newline:
-	; make this later
+	push eax
+	push ecx
+	push edx
+	mov eax, [cursor_pos]
+	xor edx, edx
+	mov ecx, 160
+	div ecx
+	inc eax
+	mul ecx
+	mov [cursor_pos], eax
+	pop edx
+	pop ecx
+	pop eax
 	ret
-
 boot_drive:		db 0
 cursor_pos:		dd 0
 
