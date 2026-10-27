@@ -15,3 +15,6 @@ WHITE_ON_BLACK	equ 0x0f
 
 %define stage3_address		0x9000
 %define stage3_sectors		2
+
+%define MEMORY_MAP_BUFFER	0x7e00
+%define MEMORY_MAP_COUNT	0x7df0

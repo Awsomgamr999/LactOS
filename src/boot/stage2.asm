@@ -17,9 +17,6 @@ enable_a20:
 	out 0x92, al
 	popa
 
-	mov bx, loading_kernel_str
-	call print16_string
-	call print16_newline
 
 	mov ax, KERNEL_SEGMENT
 	mov es, ax
@@ -59,6 +56,7 @@ enable_a20:
 	int 0x13
 	jc .disk_error
 
+	call detect_memory
 
 	mov dword [cursor_pos], VGA_THIRD_LINE_OFFSET
 	call switch_to_pm
@@ -155,6 +153,42 @@ switch_to_pm:
 	jmp CODE_SEG:init_pm
 
 
+detect_memory:
+	pusha
+	mov di, MEMORY_MAP_BUFFER
+	xor ebx, ebx
+	xor bp, bp
+	mov edx, 0x534d4150
+
+	.e820_loop:
+		mov eax, 0xe820
+		mov ecx, 24
+		int 0x15
+		jc .e820_finished
+
+		cmp edx, 0x534d4150
+		jne .e820_error
+
+		test ecx, ecx
+		je .skip_entry
+
+		inc bp
+		add di, 24
+
+	.skip_entry:
+		test ebx, ebx
+		jz .e820_finished
+		jmp .e820_loop
+		
+	.e820_finished:
+		mov [MEMORY_MAP_COUNT], bp
+		popa
+		ret
+	
+	.e820_error:
+		popa
+		ret
+
 [bits 32]
 
 
@@ -216,7 +250,6 @@ boot_drive:		db 0
 cursor_pos:		dd 0
 
 real_mode_str:		db "Currently 16 bit RM", 0
-loading_kernel_str:	db "Loading Kernel", 0
 protected_mode_str:	db "Successfully in 32 bit PM", 0
 disk_error_str:		db "Disk read error! Test 123", 0
 first_read_error_str:	db "Disk read 1 error!", 0
