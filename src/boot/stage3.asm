@@ -1,6 +1,8 @@
 [org 0x9000]
 [bits 32]
 
+%include "common.inc"
+
 stage3_entry:
 	mov ebx, edi
 	add edi, 0xb8000
@@ -67,7 +69,6 @@ stage64_entry:
 	mov ss, ax
 	mov gs, ax
 
-	mov rdi, rdi
 	add rdi, 0xb8000
 	mov rsi, stage64_msg
 	mov ah, 0x0f
@@ -81,10 +82,22 @@ stage64_entry:
 		jmp .print64_loop
 
 	.done64:
-		cli
-		hlt
+		
+		sub rdi, 0xb8000
+		mov rax, rdi
+		xor rdx, rdx
+		mov rcx, 160
+		div rcx
+		inc eax
+		mul rcx
+		add rax, 0xb8000
+		mov rdi, rax
+		
+		mov rax, KERNEL_OFFSET
+		jmp rax
 	
 stage64_msg: db "Welcome to 64 bit.", 0
+load_kernel: db "Loading Kernel...", 0
 
 
 ALIGN 4
