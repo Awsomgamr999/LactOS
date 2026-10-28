@@ -9,10 +9,19 @@ echo "hello world!"
 # nasm ASM files to BIN files
 echo ""
 echo "compiling ASM files into Binary."
-nasm -f bin -i ../src/kernel ../src/kernel/kernel.asm -o ../build/raw/kernel.bin
+# nasm -f bin -i ../src/kernel ../src/kernel/kernel.asm -o ../build/raw/kernel.bin
 nasm -f bin -i ../src/boot ../src/boot/boot.asm -o ../build/raw/boot.bin
 nasm -f bin -i ../src/boot ../src/boot/stage2.asm -o ../build/raw/stage2.bin
 nasm -f bin -i ../src/boot ../src/boot/stage3.asm -o ../build/raw/stage3.bin
+
+clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/main.c -o ../build/raw/main.o
+
+nasm -f elf64 ../src/kernel/kernel_start.asm -o ../build/raw/kernel_start.o
+
+ld.lld -T ../src/kernel/link.ld -o ../build/raw/kernel.elf ../build/raw/kernel_start.o ../build/raw/main.o
+
+objcopy -O binary ../build/raw/kernel.elf ../build/raw/kernel.bin
+
 echo ""
 echo ../src/boot/boot.asm
 
