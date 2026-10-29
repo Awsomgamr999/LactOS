@@ -24,3 +24,5 @@ LactOS is actively developed, compiled, and emulated directly on an iOS device u
  ## Features:
  - A bootloader that works and boots you into 64 bit long mode
  - A basic VGA display / text console
+ - Interrupt table
+ - Basic keyboard driver
