@@ -14,11 +14,22 @@ nasm -f bin -i ../src/boot ../src/boot/boot.asm -o ../build/raw/boot.bin
 nasm -f bin -i ../src/boot ../src/boot/stage2.asm -o ../build/raw/stage2.bin
 nasm -f bin -i ../src/boot ../src/boot/stage3.asm -o ../build/raw/stage3.bin
 
-clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/main.c -o ../build/raw/main.o
 
 nasm -f elf64 ../src/kernel/kernel_start.asm -o ../build/raw/kernel_start.o
+nasm -f elf64 ../src/kernel/cpu/interrupts.asm -o ../build/raw/interrupts.o
 
-ld.lld -T ../src/kernel/link.ld -o ../build/raw/kernel.elf ../build/raw/kernel_start.o ../build/raw/main.o
+
+clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/core/main.c -o ../build/raw/main.o
+clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/cpu/idt.c -o ../build/raw/idt.o
+clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/drivers/keyboard.c -o ../build/raw/keyboard.o
+
+
+ld.lld -T ../src/kernel/link.ld -o ../build/raw/kernel.elf \
+    ../build/raw/kernel_start.o \
+    ../build/raw/interrupts.o \
+    ../build/raw/main.o \
+    ../build/raw/idt.o \
+    ../build/raw/keyboard.o
 
 objcopy -O binary ../build/raw/kernel.elf ../build/raw/kernel.bin
 

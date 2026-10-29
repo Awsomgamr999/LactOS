@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include "../include/idt.h"
+#include "../include/keyboard.h"
 
 struct __attribute__((packed)) e820_entry {
 	uint64_t base_addr;
@@ -48,7 +50,6 @@ void kernel_main(void) {
 	clear_screen();
 	
 	int cursor = 0;
-
 	cursor = print_string(cursor, "Hello Starman", 0x0a);
 
 	cursor = 160;
@@ -69,6 +70,12 @@ void kernel_main(void) {
 	cursor = print_number(cursor, total_ram_mb, 0x0f);
 	cursor = print_string(cursor, " MB", 0x0f);
 	
+	cursor = 320;
+	cursor = print_string(cursor, "LactOS> ", 0x0f);
+	
+	keyboard_cursor_offset = cursor;
+	
+	init_idt();
 
 	while (1) {
 		__asm__("hlt");
