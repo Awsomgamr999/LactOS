@@ -26,3 +26,5 @@ LactOS is actively developed, compiled, and emulated directly on an iOS device u
  - A basic VGA display / text console
  - Interrupt table
  - Basic keyboard driver
+
+[Buy me a milkshake](https://buymeacoffee.com/awsomgamr)
