@@ -26,5 +26,6 @@ LactOS is actively developed, compiled, and emulated directly on an iOS device u
  - A basic VGA display / text console
  - Interrupt table
  - Basic keyboard driver
+ - Time function, increments 35x per second
 
 [Buy me a milkshake](https://buymeacoffee.com/awsomgamr)

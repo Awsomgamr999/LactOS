@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "../include/idt.h"
 #include "../include/keyboard.h"
+#include "../include/timer.h"
 
 struct __attribute__((packed)) e820_entry {
 	uint64_t base_addr;
@@ -70,14 +71,28 @@ void kernel_main(void) {
 	cursor = print_number(cursor, total_ram_mb, 0x0f);
 	cursor = print_string(cursor, " MB", 0x0f);
 	
-	cursor = 320;
+
+	cursor = 480;
 	cursor = print_string(cursor, "LactOS> ", 0x0f);
 	
 	keyboard_cursor_offset = cursor;
 	
 	init_idt();
-
+    init_pit(35);
+    
+    uint64_t last_ticks = 0;
+    
 	while (1) {
+		
+		uint64_t current_ticks = get_ticks();
+		
+		if (current_ticks != last_ticks) {
+		    last_ticks = current_ticks;
+		    
+		    print_string(320, "Ticks:         ", 0x0f);
+		    print_number(334, current_ticks, 0x0f);
+		}
+		
 		__asm__("hlt");
 
 	}

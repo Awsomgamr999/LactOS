@@ -34,9 +34,11 @@ static void remap_pic(void) {
     outb(PIC1_DATA, 0x01);
     outb(PIC2_DATA, 0x01);
 
-    outb(PIC1_DATA, 0xFD); 
+    outb(PIC1_DATA, 0xFC); 
     outb(PIC2_DATA, 0xFF);
 }
+
+extern void isr_stub_timer(void);
 
 void set_idt_gate(int vector, uint64_t handler) {
     idt[vector].offset_low  = (uint16_t)(handler & 0xFFFF);
@@ -56,6 +58,7 @@ void init_idt(void) {
 
     remap_pic();
 
+    set_idt_gate(0x20, (uint64_t)isr_stub_timer);
     set_idt_gate(0x21, (uint64_t)isr_stub_keyboard);
 
     __asm__ volatile ("lidt %0" : : "m"(idtr));

@@ -22,6 +22,7 @@ nasm -f elf64 ../src/kernel/cpu/interrupts.asm -o ../build/raw/interrupts.o
 clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/core/main.c -o ../build/raw/main.o
 clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/cpu/idt.c -o ../build/raw/idt.o
 clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/drivers/keyboard.c -o ../build/raw/keyboard.o
+clang --target=x86_64-elf -ffreestanding -mno-red-zone -m64 -mno-sse -mno-sse2 -mno-avx -mno-avx2 -c ../src/kernel/drivers/timer.c -o ../build/raw/timer.o
 
 
 ld.lld -T ../src/kernel/link.ld -o ../build/raw/kernel.elf \
@@ -29,7 +30,8 @@ ld.lld -T ../src/kernel/link.ld -o ../build/raw/kernel.elf \
     ../build/raw/interrupts.o \
     ../build/raw/main.o \
     ../build/raw/idt.o \
-    ../build/raw/keyboard.o
+    ../build/raw/keyboard.o \
+    ../build/raw/timer.o
 
 objcopy -O binary ../build/raw/kernel.elf ../build/raw/kernel.bin
 
